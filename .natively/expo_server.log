@@ -853,3 +853,5 @@ Web Bundled 39ms index.ts (1 module)
 2025-10-23T20:46:14.611Z expo:start:server:metro:router Using app as the root directory for Expo Router.
 2025-10-23T20:46:16.713Z expo:start:server:middleware:manifest Resolved entry point: index.ts (project root: /expo-project)
 2025-10-23T20:46:16.713Z expo:start:server:metro:router Using app as the root directory for Expo Router.
+2025-10-23T20:46:18.817Z expo:start:server:middleware:manifest Resolved entry point: index.ts (project root: /expo-project)
+2025-10-23T20:46:18.817Z expo:start:server:metro:router Using app as the root directory for Expo Router.
