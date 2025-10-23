@@ -1,55 +1,66 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
-import { Stack } from 'expo-router';
+
+import React, { useEffect } from 'react';
+import { Platform, View } from 'react-native';
+import { Stack, Redirect } from 'expo-router';
 import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
+import { useApp } from '@/contexts/AppContext';
 
 export default function TabLayout() {
-  // Define the tabs configuration
+  const { isAuthenticated } = useApp();
+
+  // Redirect to auth if not authenticated
+  if (!isAuthenticated) {
+    return <Redirect href="/auth" />;
+  }
+
   const tabs: TabBarItem[] = [
     {
-      name: '(home)',
-      route: '/(tabs)/(home)/',
-      icon: 'house.fill',
-      label: 'Home',
+      name: 'index',
+      route: '/(tabs)/',
+      icon: 'sparkles',
+      label: 'Tricks',
     },
     {
-      name: 'profile',
-      route: '/(tabs)/profile',
+      name: 'random',
+      route: '/(tabs)/random',
+      icon: 'shuffle',
+      label: 'Random',
+    },
+    {
+      name: 'favorites',
+      route: '/(tabs)/favorites',
+      icon: 'heart.fill',
+      label: 'Favorites',
+    },
+    {
+      name: 'account',
+      route: '/(tabs)/account',
       icon: 'person.fill',
-      label: 'Profile',
+      label: 'Account',
+    },
+    {
+      name: 'settings',
+      route: '/(tabs)/settings',
+      icon: 'gear',
+      label: 'Settings',
     },
   ];
 
-  // Use NativeTabs for iOS, custom FloatingTabBar for Android and Web
-  if (Platform.OS === 'ios') {
-    return (
-      <NativeTabs>
-        <NativeTabs.Trigger name="(home)">
-          <Icon sf="house.fill" drawable="ic_home" />
-          <Label>Home</Label>
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="profile">
-          <Icon sf="person.fill" drawable="ic_profile" />
-          <Label>Profile</Label>
-        </NativeTabs.Trigger>
-      </NativeTabs>
-    );
-  }
-
-  // For Android and Web, use Stack navigation with custom floating tab bar
   return (
     <>
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'none', // Remove fade animation to prevent black screen flash
+          animation: 'none',
         }}
       >
-        <Stack.Screen name="(home)" />
-        <Stack.Screen name="profile" />
+        <Stack.Screen name="index" />
+        <Stack.Screen name="random" />
+        <Stack.Screen name="favorites" />
+        <Stack.Screen name="account" />
+        <Stack.Screen name="settings" />
       </Stack>
-      <FloatingTabBar tabs={tabs} />
+      <FloatingTabBar tabs={tabs} containerWidth={350} />
     </>
   );
 }
