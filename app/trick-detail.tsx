@@ -6,8 +6,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Pressable,
-  Platform
+  Platform,
+  Pressable
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -19,16 +19,9 @@ export default function TrickDetailScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { trickId } = useLocalSearchParams();
-  const { tricks, updateTrickProgress, toggleFavorite, markTrickAsViewed } = useApp();
-  const [showMethod, setShowMethod] = useState(false);
+  const { tricks, updateTrickProgress, toggleFavorite } = useApp();
   
   const trick = tricks.find(t => t.id === trickId) as Trick | undefined;
-
-  useEffect(() => {
-    if (trick) {
-      markTrickAsViewed(trick.id);
-    }
-  }, [trick?.id]);
 
   if (!trick) {
     return (
@@ -55,8 +48,6 @@ export default function TrickDetailScreen() {
     updateTrickProgress(trick.id, stepId, !currentState);
   };
 
-  const isIOS = Platform.OS === 'ios';
-
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card, borderBottomColor: getBorderColor() }]}>
@@ -81,14 +72,14 @@ export default function TrickDetailScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          !isIOS && styles.contentWithTabBar
+          Platform.OS !== 'ios' && styles.contentWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.infoCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Summary</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Details</Text>
           <Text style={[styles.description, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
-            {trick.summary}
+            {trick.description}
           </Text>
 
           <View style={styles.badges}>
@@ -114,35 +105,6 @@ export default function TrickDetailScreen() {
               </Text>
             </View>
           ))}
-        </View>
-
-        <View style={[styles.methodCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
-          <TouchableOpacity 
-            style={styles.methodHeader}
-            onPress={() => setShowMethod(!showMethod)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.methodHeaderLeft}>
-              <IconSymbol 
-                name="lightbulb.fill" 
-                size={20} 
-                color={theme.colors.primary} 
-              />
-              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0 }]}>
-                The Method
-              </Text>
-            </View>
-            <IconSymbol 
-              name={showMethod ? 'chevron.up' : 'chevron.down'} 
-              size={20} 
-              color={theme.dark ? '#98989D' : '#8E8E93'} 
-            />
-          </TouchableOpacity>
-          {showMethod && (
-            <Text style={[styles.methodText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
-              {trick.method}
-            </Text>
-          )}
         </View>
 
         <View style={[styles.progressCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
@@ -254,20 +216,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
-    }),
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 20,
@@ -316,58 +266,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     flex: 1,
   },
-  methodCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
-    }),
-  },
-  methodHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  methodHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  methodText: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginTop: 12,
-  },
   progressCard: {
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
-    }),
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -395,20 +299,8 @@ const styles = StyleSheet.create({
   stepsCard: {
     borderRadius: 16,
     padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
-    }),
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   stepItem: {
     paddingVertical: 16,

@@ -124,54 +124,6 @@ const itemsByCategory: Record<TrickCategory, string[][]> = {
 
 const estimatedTimes = [5, 8, 10, 7, 6, 12, 15, 18, 14, 16, 20, 25, 22, 28, 30];
 
-const summaries: Record<DifficultyLevel, string[]> = {
-  Beginner: [
-    'This classic trick is perfect for beginners and creates an amazing visual effect. The secret lies in simple sleight of hand that anyone can master with practice.',
-    'A straightforward yet impressive trick that will leave your audience wondering how you did it. The method is easy to learn but powerful in execution.',
-    'An excellent starting point for aspiring magicians. This trick teaches fundamental techniques while delivering a strong magical moment.',
-    'One of the most popular beginner tricks that never fails to amaze. The secret is simple, but the impact is profound.',
-    'A visual masterpiece that requires minimal setup but maximum practice. Perfect for close-up performances.'
-  ],
-  Intermediate: [
-    'This intermediate-level trick builds on basic techniques and introduces more complex handling. The effect is stunning and worth the extra practice required.',
-    'A step up from beginner material, this trick requires good timing and misdirection. When performed well, it creates an impossible moment.',
-    'This classic effect has fooled magicians for decades. The method is clever and the presentation possibilities are endless.',
-    'An intermediate trick that combines multiple techniques into one seamless routine. Practice each phase separately before putting it all together.',
-    'This effect requires confidence and smooth handling. The payoff is a trick that looks truly impossible to your audience.'
-  ],
-  Advanced: [
-    'A masterpiece of magic that requires dedication to master. This trick combines advanced sleight of hand with psychological principles for a devastating effect.',
-    'One of the most challenging tricks in magic, but also one of the most rewarding. Every detail matters in this sophisticated routine.',
-    'This advanced effect pushes the boundaries of what seems possible. Mastering this trick will elevate your magic to a professional level.',
-    'A complex routine that requires perfect timing, misdirection, and technical skill. This is magic at its finest.',
-    'The holy grail of this category. This trick has fooled experts and laypeople alike. Prepare to invest significant time in mastering every nuance.'
-  ]
-};
-
-const methods: Record<DifficultyLevel, string[]> = {
-  Beginner: [
-    'The method relies on a simple palm technique. Hold the object naturally in your hand, keeping your fingers relaxed. Practice in front of a mirror until the move looks effortless.',
-    'This uses a basic force technique. Guide the spectator\'s choice subtly while making them feel they have complete freedom. The key is confidence.',
-    'The secret involves a clever setup that takes just seconds. Position everything naturally before you begin, and the trick practically works itself.',
-    'This method uses misdirection at the perfect moment. When you draw attention to one hand, the other hand does the secret work.',
-    'A simple gimmick does most of the work here. The gimmick is easy to make and even easier to use, but practice your handling to keep it hidden.'
-  ],
-  Intermediate: [
-    'The method combines a double lift with a color change. Master each technique separately, then blend them together smoothly. Timing is everything.',
-    'This uses a clever switch at a critical moment. The switch happens when the audience is focused elsewhere. Practice the timing until it becomes second nature.',
-    'The method involves a special preparation that must be done in advance. Once prepared, the trick flows naturally, but the setup is crucial.',
-    'This technique uses a combination of palming and misdirection. Your patter and presentation are just as important as the physical technique.',
-    'The secret is a sophisticated handling that requires muscle memory. Practice the moves slowly at first, gradually building up speed and smoothness.'
-  ],
-  Advanced: [
-    'This method requires mastery of multiple advanced techniques executed in perfect sequence. Each move must be invisible, and the timing must be flawless.',
-    'The secret involves a complex system that must be memorized completely. There are no shortcuts - you must know every detail by heart.',
-    'This uses an advanced principle that few magicians understand. Study the theory carefully before attempting the practical application.',
-    'The method combines physical technique with psychological manipulation. You must control not just the props, but also the audience\'s perception and memory.',
-    'This requires perfect execution of an extremely difficult sleight. Even small mistakes will be noticed. Practice thousands of times before performing.'
-  ]
-};
-
 function generateSteps(difficulty: DifficultyLevel, trickName: string): any[] {
   const stepCounts = { Beginner: 5, Intermediate: 7, Advanced: 10 };
   const count = stepCounts[difficulty];
@@ -196,18 +148,16 @@ export function generateAllTricks(): Trick[] {
                   category === 'Close Up Magic' ? closeUpMagicNames :
                   illusionNames;
 
-    difficulties.forEach((difficulty, diffIndex) => {
+    difficulties.forEach((difficulty) => {
       const tricksForDifficulty = names[difficulty];
       
-      tricksForDifficulty.forEach((trickName, nameIndex) => {
+      tricksForDifficulty.forEach((trickName) => {
         tricks.push({
           id: `trick-${trickId}`,
           title: trickName,
           category,
           difficulty,
           description: `Learn the amazing ${trickName} trick. This ${difficulty.toLowerCase()} level ${category.toLowerCase()} trick will amaze your audience!`,
-          summary: summaries[difficulty][nameIndex % summaries[difficulty].length],
-          method: methods[difficulty][nameIndex % methods[difficulty].length],
           itemsNeeded: itemsByCategory[category][itemIndex % itemsByCategory[category].length],
           estimatedTime: estimatedTimes[itemIndex % estimatedTimes.length],
           steps: generateSteps(difficulty, trickName),
