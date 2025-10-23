@@ -121,7 +121,7 @@ export default function TricksScreen() {
       {showFilters && (
         <View style={[styles.filtersContainer, { backgroundColor: theme.colors.card }]}>
           <View style={styles.filtersHeader}>
-            <Text style={[styles.filtersTitle, { color: theme.colors.text }]}>Filters & Sort</Text>
+            <Text style={[styles.filtersTitle, { color: '#000000' }]}>Filters & Sort</Text>
             {activeFiltersCount > 0 && (
               <TouchableOpacity
                 onPress={() => {
@@ -139,7 +139,7 @@ export default function TricksScreen() {
           <View style={styles.filterSection}>
             <View style={styles.filterLabelRow}>
               <IconSymbol name="square.grid.2x2" size={16} color={theme.colors.primary} />
-              <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Category</Text>
+              <Text style={[styles.filterLabel, { color: '#000000' }]}>Category</Text>
             </View>
             <View style={[
               styles.pickerContainer,
@@ -152,11 +152,11 @@ export default function TricksScreen() {
               <Picker
                 selectedValue={selectedCategory}
                 onValueChange={(itemValue) => setSelectedCategory(itemValue as TrickCategory | 'All')}
-                style={[styles.picker, { color: theme.colors.text }]}
-                dropdownIconColor={theme.colors.text}
+                style={[styles.picker, { color: '#000000' }]}
+                dropdownIconColor="#000000"
               >
                 {categories.map(cat => (
-                  <Picker.Item key={cat} label={cat} value={cat} />
+                  <Picker.Item key={cat} label={cat} value={cat} color="#000000" />
                 ))}
               </Picker>
             </View>
@@ -165,7 +165,7 @@ export default function TricksScreen() {
           <View style={styles.filterSection}>
             <View style={styles.filterLabelRow}>
               <IconSymbol name="chart.bar" size={16} color={theme.colors.primary} />
-              <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Difficulty</Text>
+              <Text style={[styles.filterLabel, { color: '#000000' }]}>Difficulty</Text>
             </View>
             <View style={[
               styles.pickerContainer,
@@ -178,11 +178,11 @@ export default function TricksScreen() {
               <Picker
                 selectedValue={selectedDifficulty}
                 onValueChange={(itemValue) => setSelectedDifficulty(itemValue as DifficultyLevel | 'All')}
-                style={[styles.picker, { color: theme.colors.text }]}
-                dropdownIconColor={theme.colors.text}
+                style={[styles.picker, { color: '#000000' }]}
+                dropdownIconColor="#000000"
               >
                 {difficulties.map(diff => (
-                  <Picker.Item key={diff} label={diff} value={diff} />
+                  <Picker.Item key={diff} label={diff} value={diff} color="#000000" />
                 ))}
               </Picker>
             </View>
@@ -191,7 +191,7 @@ export default function TricksScreen() {
           <View style={styles.filterSection}>
             <View style={styles.filterLabelRow}>
               <IconSymbol name="arrow.up.arrow.down" size={16} color={theme.colors.primary} />
-              <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Sort By</Text>
+              <Text style={[styles.filterLabel, { color: '#000000' }]}>Sort By</Text>
             </View>
             <View style={[
               styles.pickerContainer,
@@ -204,11 +204,11 @@ export default function TricksScreen() {
               <Picker
                 selectedValue={sortBy}
                 onValueChange={(itemValue) => setSortBy(itemValue as SortOption)}
-                style={[styles.picker, { color: theme.colors.text }]}
-                dropdownIconColor={theme.colors.text}
+                style={[styles.picker, { color: '#000000' }]}
+                dropdownIconColor="#000000"
               >
                 {sortOptions.map(option => (
-                  <Picker.Item key={option.value} label={option.label} value={option.value} />
+                  <Picker.Item key={option.value} label={option.label} value={option.value} color="#000000" />
                 ))}
               </Picker>
             </View>
