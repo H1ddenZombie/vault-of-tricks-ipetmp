@@ -14,11 +14,19 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useApp } from '@/contexts/AppContext';
 import { IconSymbol } from '@/components/IconSymbol';
+import * as Haptics from 'expo-haptics';
 
 export default function SettingsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { isDarkMode, toggleTheme, logout } = useApp();
+
+  const handleThemeToggle = () => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    toggleTheme();
+  };
 
   const handleLogout = () => {
     Alert.alert(
@@ -56,16 +64,35 @@ export default function SettingsScreen() {
           
           <View style={styles.settingRow}>
             <View style={styles.settingLeft}>
-              <IconSymbol name="moon.fill" size={24} color={theme.colors.text} />
-              <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
-                Dark Mode
-              </Text>
+              <View style={[
+                styles.iconContainer,
+                { backgroundColor: isDarkMode ? '#2C2C2E' : '#F2F2F7' }
+              ]}>
+                <IconSymbol 
+                  name={isDarkMode ? "moon.fill" : "sun.max.fill"} 
+                  size={20} 
+                  color={isDarkMode ? '#FFD60A' : '#FF9500'} 
+                />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                  {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                </Text>
+                <Text style={[styles.settingDescription, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+                  {isDarkMode ? 'Switch to light theme' : 'Switch to dark theme'}
+                </Text>
+              </View>
             </View>
             <Switch
               value={isDarkMode}
-              onValueChange={toggleTheme}
-              trackColor={{ false: '#767577', true: theme.colors.primary }}
-              thumbColor="#FFF"
+              onValueChange={handleThemeToggle}
+              trackColor={{ 
+                false: theme.dark ? '#39393D' : '#E5E5EA', 
+                true: '#34C759' 
+              }}
+              thumbColor="#FFFFFF"
+              ios_backgroundColor={theme.dark ? '#39393D' : '#E5E5EA'}
+              style={styles.switch}
             />
           </View>
         </View>
@@ -78,10 +105,20 @@ export default function SettingsScreen() {
             onPress={() => router.push('/account-settings')}
           >
             <View style={styles.settingLeft}>
-              <IconSymbol name="person.fill" size={24} color={theme.colors.text} />
-              <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
-                Account Settings
-              </Text>
+              <View style={[
+                styles.iconContainer,
+                { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+              ]}>
+                <IconSymbol name="person.fill" size={20} color="#007AFF" />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                  Account Settings
+                </Text>
+                <Text style={[styles.settingDescription, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+                  Edit profile and preferences
+                </Text>
+              </View>
             </View>
             <IconSymbol name="chevron.right" size={20} color={theme.dark ? '#98989D' : '#8E8E93'} />
           </TouchableOpacity>
@@ -95,10 +132,20 @@ export default function SettingsScreen() {
             onPress={() => router.push('/notification-settings')}
           >
             <View style={styles.settingLeft}>
-              <IconSymbol name="bell.fill" size={24} color={theme.colors.text} />
-              <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
-                Notification Settings
-              </Text>
+              <View style={[
+                styles.iconContainer,
+                { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }
+              ]}>
+                <IconSymbol name="bell.fill" size={20} color="#FF9500" />
+              </View>
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                  Notification Settings
+                </Text>
+                <Text style={[styles.settingDescription, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+                  Manage reminders and alerts
+                </Text>
+              </View>
             </View>
             <IconSymbol name="chevron.right" size={20} color={theme.dark ? '#98989D' : '#8E8E93'} />
           </TouchableOpacity>
@@ -161,9 +208,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    flex: 1,
+  },
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingTextContainer: {
+    flex: 1,
   },
   settingLabel: {
     fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 13,
+  },
+  switch: {
+    transform: Platform.OS === 'ios' ? [{ scaleX: 0.9 }, { scaleY: 0.9 }] : [],
   },
   logoutButton: {
     flexDirection: 'row',

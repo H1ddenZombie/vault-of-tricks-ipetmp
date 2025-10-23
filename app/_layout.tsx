@@ -3,20 +3,19 @@ import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useColorScheme } from "react-native";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { SystemBars } from "react-native-edge-to-edge";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from 'expo-notifications';
-import { AppProvider } from "@/contexts/AppContext";
+import { AppProvider, useApp } from "@/contexts/AppContext";
 import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootLayoutContent() {
   const router = useRouter();
+  const { isDarkMode } = useApp();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -49,20 +48,26 @@ export default function RootLayout() {
   }
 
   return (
+    <ThemeProvider value={isDarkMode ? DarkTheme : DefaultTheme}>
+      <SystemBars style={isDarkMode ? "light" : "dark"} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="auth" />
+        <Stack.Screen name="trick-detail" />
+        <Stack.Screen name="account-settings" />
+        <Stack.Screen name="all-completed" />
+        <Stack.Screen name="notification-settings" />
+      </Stack>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
+    </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AppProvider>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <SystemBars style={colorScheme === "dark" ? "light" : "dark"} />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="auth" />
-            <Stack.Screen name="trick-detail" />
-            <Stack.Screen name="account-settings" />
-            <Stack.Screen name="all-completed" />
-            <Stack.Screen name="notification-settings" />
-          </Stack>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        </ThemeProvider>
+        <RootLayoutContent />
       </AppProvider>
     </GestureHandlerRootView>
   );

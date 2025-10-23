@@ -4,7 +4,7 @@ import { Trick, UserProfile, UserProgress, NotificationSettings } from '@/types/
 import { generateAllTricks } from '@/data/tricksData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 
 interface AppContextType {
   tricks: Trick[];
@@ -41,10 +41,11 @@ Notifications.setNotificationHandler({
 });
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const systemColorScheme = useColorScheme();
   const [tricks, setTricks] = useState<Trick[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
   const [isLoading, setIsLoading] = useState(true);
   const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     dailyReminderEnabled: true,
@@ -169,8 +170,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setIsAuthenticated(JSON.parse(storedAuth));
       }
 
-      if (storedTheme) {
+      if (storedTheme !== null) {
+        // Use stored theme preference if it exists
         setIsDarkMode(JSON.parse(storedTheme));
+      } else {
+        // Otherwise use system preference
+        setIsDarkMode(systemColorScheme === 'dark');
       }
 
       if (storedNotificationSettings) {
@@ -179,6 +184,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.log('Error loading data:', error);
       setTricks(generateAllTricks());
+      setIsDarkMode(systemColorScheme === 'dark');
     } finally {
       setIsLoading(false);
     }
