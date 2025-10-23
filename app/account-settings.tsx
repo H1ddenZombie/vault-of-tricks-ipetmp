@@ -7,8 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Platform,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -44,6 +44,8 @@ export default function AccountSettingsScreen() {
     ]);
   };
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
@@ -58,7 +60,7 @@ export default function AccountSettingsScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          Platform.OS !== 'ios' && styles.contentWithTabBar
+          !isIOS && styles.contentWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >

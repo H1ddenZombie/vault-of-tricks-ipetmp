@@ -26,6 +26,8 @@ export default function AccountScreen() {
 
   const profileSymbol = PROFILE_SYMBOLS.find(s => s.id === userProfile?.profilePicture) || PROFILE_SYMBOLS[2];
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
@@ -35,7 +37,7 @@ export default function AccountScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          Platform.OS !== 'ios' && styles.contentWithTabBar
+          !isIOS && styles.contentWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >

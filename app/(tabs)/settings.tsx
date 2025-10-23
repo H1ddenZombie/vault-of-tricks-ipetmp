@@ -7,9 +7,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
-  Platform,
   Alert,
-  Modal
+  Modal,
+  Platform
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -48,6 +48,8 @@ export default function SettingsScreen() {
     { value: 5, label: 'Five times per day' },
   ];
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
@@ -57,7 +59,7 @@ export default function SettingsScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          Platform.OS !== 'ios' && styles.contentWithTabBar
+          !isIOS && styles.contentWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >

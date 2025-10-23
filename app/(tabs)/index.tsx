@@ -7,8 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Platform,
-  Modal
+  Modal,
+  Platform
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useApp } from '@/contexts/AppContext';
@@ -129,6 +129,8 @@ export default function TricksScreen() {
     </Modal>
   );
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
@@ -190,7 +192,7 @@ export default function TricksScreen() {
         style={styles.scrollView}
         contentContainerStyle={[
           styles.tricksContainer,
-          Platform.OS !== 'ios' && styles.tricksContainerWithTabBar
+          !isIOS && styles.tricksContainerWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >

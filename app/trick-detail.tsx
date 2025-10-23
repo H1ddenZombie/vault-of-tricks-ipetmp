@@ -6,8 +6,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
-  Pressable
+  Pressable,
+  Platform
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -55,6 +55,8 @@ export default function TrickDetailScreen() {
     updateTrickProgress(trick.id, stepId, !currentState);
   };
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card, borderBottomColor: getBorderColor() }]}>
@@ -79,7 +81,7 @@ export default function TrickDetailScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          Platform.OS !== 'ios' && styles.contentWithTabBar
+          !isIOS && styles.contentWithTabBar
         ]}
         showsVerticalScrollIndicator={false}
       >
