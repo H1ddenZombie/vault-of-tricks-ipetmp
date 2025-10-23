@@ -11,11 +11,20 @@ import * as Notifications from 'expo-notifications';
 import { AppProvider, useApp } from "@/contexts/AppContext";
 import "react-native-reanimated";
 
+// Configure notification handler
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutContent() {
   const router = useRouter();
-  const { isDarkMode } = useApp();
+  const { isDarkMode, isAuthenticated } = useApp();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -43,6 +52,13 @@ function RootLayoutContent() {
     return () => subscription.remove();
   }, []);
 
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (loaded && !isAuthenticated) {
+      router.replace('/auth');
+    }
+  }, [loaded, isAuthenticated]);
+
   if (!loaded) {
     return null;
   }
@@ -52,11 +68,11 @@ function RootLayoutContent() {
       <SystemBars style={isDarkMode ? "light" : "dark"} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="trick-detail" />
-        <Stack.Screen name="account-settings" />
-        <Stack.Screen name="all-completed" />
-        <Stack.Screen name="notification-settings" />
+        <Stack.Screen name="auth" options={{ headerShown: false }} />
+        <Stack.Screen name="trick-detail" options={{ headerShown: false }} />
+        <Stack.Screen name="account-settings" options={{ headerShown: false }} />
+        <Stack.Screen name="all-completed" options={{ headerShown: false }} />
+        <Stack.Screen name="notification-settings" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style={isDarkMode ? "light" : "dark"} />
     </ThemeProvider>
