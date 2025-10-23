@@ -129,7 +129,7 @@ const trickSummaries: Record<string, string> = {
   // Card Tricks - Beginner
   'The Four Aces': 'A classic card trick where all four aces magically appear together after being lost in the deck. The spectator shuffles the deck, yet you can still locate all four aces instantly. This is a perfect opener that demonstrates your control over the cards and sets the tone for more advanced tricks.',
   'Simple Card Prediction': 'You write down a prediction before the trick begins, then have a spectator freely select a card. When they reveal their choice, your prediction matches perfectly. This trick teaches the fundamentals of forcing and prediction reveals, essential skills for any card magician.',
-  'Card to Pocket': 'A spectator selects and signs a card, which is then lost in the deck. With a snap of your fingers, their signed card vanishes from the deck and appears in your pocket. This trick combines sleight of hand with misdirection to create an impossible moment.',
+  'Card to Pocket': 'A spectator selects and signs a card, which is then lost in the deck. With a snap of your fingers, their signed card vanishes from the deck and appears in your pocket. This trick combines sleight of hand with misdirection to create an impossible moment. The card-to-pocket trick typically uses a sleight-of-hand technique called "palming" to secretly get a chosen card into your pocket. A version that does not require palming is possible by using a distraction technique.',
   'The Rising Card': 'A selected card mysteriously rises from the deck on command. The spectator chooses any card, returns it to the deck, and watches as it slowly rises up as if controlled by an invisible force. This visual trick creates a haunting, supernatural effect.',
   'Color Change': 'With a simple wave of your hand, one card instantly transforms into another right before the spectator\'s eyes. This lightning-fast visual change happens in plain sight and can be repeated multiple times. It\'s one of the most visually stunning moves in card magic.',
   
@@ -340,7 +340,70 @@ const trickMethods: Record<string, string> = {
   'Origami Illusion': 'This uses a special box with mirrors or hidden compartments. The person appears to be folded into an impossibly small space but actually uses the hidden space cleverly. The method requires a specially built box and perfect positioning. Practice until the illusion looks impossible and the person can get into position quickly.'
 };
 
+// Special steps for Card to Pocket trick
+const cardToPocketSteps = [
+  {
+    id: 'step-1',
+    stepNumber: 1,
+    instruction: 'Choose a target card (e.g., the top card of the deck).',
+    completed: false
+  },
+  {
+    id: 'step-2',
+    stepNumber: 2,
+    instruction: 'Casually place the target card at the top of the deck before you begin.',
+    completed: false
+  },
+  {
+    id: 'step-3',
+    stepNumber: 3,
+    instruction: 'Overhand Force: Hold the deck and perform an overhand shuffle, but retain the top card by injogging it with your thumb as you shuffle. Complete the shuffle, keeping the injogged card on top.',
+    completed: false
+  },
+  {
+    id: 'step-4',
+    stepNumber: 4,
+    instruction: 'Ask the spectator to say "stop" at any time as you flip through the cards. Stop at the injogged card, and reveal it as their selection.',
+    completed: false
+  },
+  {
+    id: 'step-5',
+    stepNumber: 5,
+    instruction: 'As the spectator looks at the card, casually take the card back, seemingly placing it in the middle of the deck, but secretly keep it palmed in your hand.',
+    completed: false
+  },
+  {
+    id: 'step-6',
+    stepNumber: 6,
+    instruction: 'Once the card is in your palm, discreetly put your hand in your pocket and leave the card there.',
+    completed: false
+  },
+  {
+    id: 'step-7',
+    stepNumber: 7,
+    instruction: 'Make a magical gesture (snap your fingers, wave your hand over the deck, etc.).',
+    completed: false
+  },
+  {
+    id: 'step-8',
+    stepNumber: 8,
+    instruction: 'Announce that their selected card has magically traveled to your pocket.',
+    completed: false
+  },
+  {
+    id: 'step-9',
+    stepNumber: 9,
+    instruction: 'Reach into your pocket and dramatically produce the card.',
+    completed: false
+  }
+];
+
 function generateSteps(difficulty: DifficultyLevel, trickName: string): any[] {
+  // Special case for Card to Pocket
+  if (trickName === 'Card to Pocket') {
+    return cardToPocketSteps;
+  }
+  
   const stepCounts = { Beginner: 5, Intermediate: 7, Advanced: 10 };
   const count = stepCounts[difficulty];
   
