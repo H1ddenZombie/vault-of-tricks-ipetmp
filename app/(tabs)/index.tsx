@@ -18,6 +18,9 @@ import { Trick, TrickCategory, DifficultyLevel } from '@/types/tricks';
 
 type SortOption = 'a-z' | 'z-a' | 'shortest' | 'longest';
 
+// Define platform constant at module level
+const isIOS = Platform.OS === 'ios';
+
 export default function TricksScreen() {
   const theme = useTheme();
   const { tricks } = useApp();
@@ -128,8 +131,6 @@ export default function TricksScreen() {
       </TouchableOpacity>
     </Modal>
   );
-
-  const isIOS = Platform.OS === 'ios';
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingTop: isIOS ? 60 : 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
   },
@@ -326,16 +327,13 @@ const styles = StyleSheet.create({
     maxHeight: '60%',
     borderRadius: 16,
     padding: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 8,
-      },
+    ...(isIOS ? {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+    } : {
+      elevation: 8,
     }),
   },
   dropdownTitle: {

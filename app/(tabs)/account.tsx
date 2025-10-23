@@ -15,6 +15,9 @@ import { IconSymbol } from '@/components/IconSymbol';
 import { PROFILE_SYMBOLS } from '@/types/tricks';
 import TrickCard from '@/components/TrickCard';
 
+// Define platform constant at module level
+const isIOS = Platform.OS === 'ios';
+
 export default function AccountScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -25,8 +28,6 @@ export default function AccountScreen() {
   const recentlyViewed = getRecentlyViewed();
 
   const profileSymbol = PROFILE_SYMBOLS.find(s => s.id === userProfile?.profilePicture) || PROFILE_SYMBOLS[2];
-
-  const isIOS = Platform.OS === 'ios';
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingTop: isIOS ? 60 : 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
   },
@@ -151,19 +152,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
+    ...(isIOS ? {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    } : {
+      elevation: 2,
     }),
   },
   avatar: {
@@ -223,19 +218,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
+    ...(isIOS ? {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    } : {
+      elevation: 2,
     }),
   },
   progressNumber: {
@@ -252,19 +241,13 @@ const styles = StyleSheet.create({
     padding: 40,
     alignItems: 'center',
     marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-      },
+    ...(isIOS ? {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    } : {
+      elevation: 2,
     }),
   },
   emptyText: {
