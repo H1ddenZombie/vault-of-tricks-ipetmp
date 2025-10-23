@@ -20,6 +20,7 @@ export default function TrickDetailScreen() {
   const router = useRouter();
   const { trickId } = useLocalSearchParams();
   const { tricks, updateTrickProgress, toggleFavorite } = useApp();
+  const [showMethod, setShowMethod] = useState(false);
   
   const trick = tricks.find(t => t.id === trickId) as Trick | undefined;
 
@@ -77,9 +78,9 @@ export default function TrickDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.infoCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Details</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Summary</Text>
           <Text style={[styles.description, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
-            {trick.description}
+            {trick.summary}
           </Text>
 
           <View style={styles.badges}>
@@ -107,6 +108,33 @@ export default function TrickDetailScreen() {
           ))}
         </View>
 
+        <View style={[styles.methodCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
+          <TouchableOpacity
+            style={styles.methodHeader}
+            onPress={() => setShowMethod(!showMethod)}
+            activeOpacity={0.7}
+          >
+            <View style={styles.methodHeaderLeft}>
+              <IconSymbol name="lightbulb.fill" size={24} color="#FFD60A" />
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0 }]}>
+                The Method
+              </Text>
+            </View>
+            <IconSymbol
+              name={showMethod ? 'chevron.up' : 'chevron.down'}
+              size={20}
+              color={theme.dark ? '#98989D' : '#8E8E93'}
+            />
+          </TouchableOpacity>
+          {showMethod && (
+            <View style={styles.methodContent}>
+              <Text style={[styles.methodText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+                {trick.method}
+              </Text>
+            </View>
+          )}
+        </View>
+
         <View style={[styles.progressCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
           <View style={styles.progressHeader}>
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Progress</Text>
@@ -128,6 +156,9 @@ export default function TrickDetailScreen() {
           <Text style={[styles.progressText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
             {trick.steps.filter(s => s.completed).length} of {trick.steps.length} steps completed
           </Text>
+          {trick.completedAt && (
+            <CompletionTime completedAt={trick.completedAt} />
+          )}
         </View>
 
         <View style={[styles.stepsCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
@@ -173,6 +204,42 @@ export default function TrickDetailScreen() {
         </View>
       </ScrollView>
     </View>
+  );
+}
+
+function CompletionTime({ completedAt }: { completedAt: Date }) {
+  const theme = useTheme();
+  const [timeString, setTimeString] = React.useState('');
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const diff = now.getTime() - completedAt.getTime();
+      const seconds = Math.floor(diff / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+
+      if (days >= 1) {
+        setTimeString(`Completed: ${completedAt.toLocaleDateString()}`);
+      } else if (hours > 0) {
+        setTimeString(`Completed: ${hours}h ${minutes % 60}m ago`);
+      } else if (minutes > 0) {
+        setTimeString(`Completed: ${minutes}m ${seconds % 60}s ago`);
+      } else {
+        setTimeString(`Completed: ${seconds}s ago`);
+      }
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, [completedAt]);
+
+  return (
+    <Text style={[styles.completionTime, { color: '#34C759' }]}>
+      ✓ {timeString}
+    </Text>
   );
 }
 
@@ -266,6 +333,33 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     flex: 1,
   },
+  methodCard: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
+  },
+  methodHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  methodHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  methodContent: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(128, 128, 128, 0.2)',
+  },
+  methodText: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
   progressCard: {
     borderRadius: 16,
     padding: 20,
@@ -295,6 +389,11 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 14,
+  },
+  completionTime: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 8,
   },
   stepsCard: {
     borderRadius: 16,

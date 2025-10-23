@@ -14,7 +14,7 @@ interface TrickCardProps {
 export default function TrickCard({ trick }: TrickCardProps) {
   const theme = useTheme();
   const router = useRouter();
-  const { toggleFavorite } = useApp();
+  const { toggleFavorite, markTrickAsViewed } = useApp();
 
   const getBorderColor = () => {
     switch (trick.difficulty) {
@@ -30,6 +30,7 @@ export default function TrickCard({ trick }: TrickCardProps) {
   };
 
   const handlePress = () => {
+    markTrickAsViewed(trick.id);
     router.push({
       pathname: '/trick-detail',
       params: { trickId: trick.id }
@@ -39,6 +40,8 @@ export default function TrickCard({ trick }: TrickCardProps) {
   const handleFavoritePress = () => {
     toggleFavorite(trick.id);
   };
+
+  const displayItemsNeeded = trick.itemsNeeded.length > 1 ? 'Multiple' : trick.itemsNeeded[0];
 
   return (
     <TouchableOpacity
@@ -78,6 +81,12 @@ export default function TrickCard({ trick }: TrickCardProps) {
           <IconSymbol name="clock" size={12} color={theme.dark ? '#98989D' : '#8E8E93'} />
           <Text style={[styles.badgeText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
             {trick.estimatedTime} min
+          </Text>
+        </View>
+        <View style={[styles.badge, { backgroundColor: theme.dark ? '#2C2C2E' : '#F2F2F7' }]}>
+          <IconSymbol name="cube.box" size={12} color={theme.dark ? '#98989D' : '#8E8E93'} />
+          <Text style={[styles.badgeText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+            {displayItemsNeeded}
           </Text>
         </View>
       </View>
@@ -181,6 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 12,
+    flexWrap: 'wrap',
   },
   badge: {
     flexDirection: 'row',

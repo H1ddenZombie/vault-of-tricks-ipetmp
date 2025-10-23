@@ -87,6 +87,23 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+        <View style={[styles.section, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Notifications</Text>
+          
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/notification-settings')}
+          >
+            <View style={styles.settingLeft}>
+              <IconSymbol name="bell.fill" size={24} color={theme.colors.text} />
+              <Text style={[styles.settingLabel, { color: theme.colors.text }]}>
+                Notification Settings
+              </Text>
+            </View>
+            <IconSymbol name="chevron.right" size={20} color={theme.dark ? '#98989D' : '#8E8E93'} />
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={[styles.logoutButton, { backgroundColor: '#FF3B30' }]}
           onPress={handleLogout}

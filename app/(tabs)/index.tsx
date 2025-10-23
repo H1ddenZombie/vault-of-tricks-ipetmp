@@ -14,6 +14,7 @@ import { useApp } from '@/contexts/AppContext';
 import { IconSymbol } from '@/components/IconSymbol';
 import TrickCard from '@/components/TrickCard';
 import { Trick, TrickCategory, DifficultyLevel } from '@/types/tricks';
+import { Picker } from '@react-native-picker/picker';
 
 type SortOption = 'a-z' | 'z-a' | 'shortest' | 'longest';
 
@@ -93,67 +94,46 @@ export default function TricksScreen() {
       {showFilters && (
         <View style={[styles.filtersContainer, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}>
           <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Category</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {categories.map(cat => (
-              <TouchableOpacity
-                key={cat}
-                style={[
-                  styles.filterChip,
-                  selectedCategory === cat && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSelectedCategory(cat)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: selectedCategory === cat ? '#FFF' : theme.colors.text }
-                ]}>
-                  {cat}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <View style={[styles.pickerContainer, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFF' }]}>
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={(itemValue) => setSelectedCategory(itemValue as TrickCategory | 'All')}
+              style={[styles.picker, { color: theme.colors.text }]}
+              dropdownIconColor={theme.colors.text}
+            >
+              {categories.map(cat => (
+                <Picker.Item key={cat} label={cat} value={cat} />
+              ))}
+            </Picker>
+          </View>
 
           <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Difficulty</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {difficulties.map(diff => (
-              <TouchableOpacity
-                key={diff}
-                style={[
-                  styles.filterChip,
-                  selectedDifficulty === diff && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSelectedDifficulty(diff)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: selectedDifficulty === diff ? '#FFF' : theme.colors.text }
-                ]}>
-                  {diff}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <View style={[styles.pickerContainer, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFF' }]}>
+            <Picker
+              selectedValue={selectedDifficulty}
+              onValueChange={(itemValue) => setSelectedDifficulty(itemValue as DifficultyLevel | 'All')}
+              style={[styles.picker, { color: theme.colors.text }]}
+              dropdownIconColor={theme.colors.text}
+            >
+              {difficulties.map(diff => (
+                <Picker.Item key={diff} label={diff} value={diff} />
+              ))}
+            </Picker>
+          </View>
 
           <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Sort By</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {sortOptions.map(option => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.filterChip,
-                  sortBy === option.value && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSortBy(option.value)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: sortBy === option.value ? '#FFF' : theme.colors.text }
-                ]}>
-                  {option.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <View style={[styles.pickerContainer, { backgroundColor: theme.dark ? '#2C2C2E' : '#FFF' }]}>
+            <Picker
+              selectedValue={sortBy}
+              onValueChange={(itemValue) => setSortBy(itemValue as SortOption)}
+              style={[styles.picker, { color: theme.colors.text }]}
+              dropdownIconColor={theme.colors.text}
+            >
+              {sortOptions.map(option => (
+                <Picker.Item key={option.value} label={option.label} value={option.value} />
+              ))}
+            </Picker>
+          </View>
         </View>
       )}
 
@@ -237,19 +217,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 8,
   },
-  filterScroll: {
+  pickerContainer: {
+    borderRadius: 8,
+    overflow: 'hidden',
     marginBottom: 8,
   },
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    backgroundColor: 'rgba(128, 128, 128, 0.2)',
-  },
-  filterChipText: {
-    fontSize: 14,
-    fontWeight: '500',
+  picker: {
+    height: 50,
   },
   scrollView: {
     flex: 1,

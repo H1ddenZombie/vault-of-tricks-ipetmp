@@ -15,12 +15,15 @@ export interface Trick {
   category: TrickCategory;
   difficulty: DifficultyLevel;
   description: string;
+  summary: string;
+  method: string;
   itemsNeeded: string[];
   estimatedTime: number; // in minutes
   steps: TrickStep[];
   isFavorite: boolean;
   progress: number; // 0-100
   completedAt?: Date;
+  lastViewedAt?: Date;
 }
 
 export interface UserProfile {
@@ -36,3 +39,20 @@ export interface UserProgress {
   totalStepsLearned: number;
   tricksCompleted: number;
 }
+
+export interface NotificationSettings {
+  dailyReminderEnabled: boolean;
+  trickOfTheDayEnabled: boolean;
+  reminderTimes: string[]; // Array of times in HH:MM format
+}
+
+export const PROFILE_IMAGES = [
+  '🎴', // Card
+  '🪙', // Coin
+  '🔮', // Crystal ball (mind reading)
+  '🎩', // Top hat (magic)
+  '✨', // Sparkles (illusions)
+  '🎭', // Theater masks
+  '🃏', // Joker card
+  '🎪', // Circus tent
+];

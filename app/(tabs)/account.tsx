@@ -17,10 +17,11 @@ import TrickCard from '@/components/TrickCard';
 export default function AccountScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { userProfile, getUserProgress, getRecentlyCompleted } = useApp();
+  const { userProfile, getUserProgress, getRecentlyCompleted, getRecentlyViewed } = useApp();
 
   const progress = getUserProgress();
   const recentlyCompleted = getRecentlyCompleted();
+  const recentlyViewed = getRecentlyViewed();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -38,7 +39,7 @@ export default function AccountScreen() {
         <View style={[styles.profileCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
           <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
             <Text style={styles.avatarText}>
-              {userProfile?.username.charAt(0).toUpperCase()}
+              {userProfile?.profilePicture || '🎩'}
             </Text>
           </View>
           <View style={styles.profileInfo}>
@@ -85,7 +86,14 @@ export default function AccountScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Completed</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Completed</Text>
+          {recentlyCompleted.length > 5 && (
+            <TouchableOpacity onPress={() => router.push('/all-completed')}>
+              <Text style={[styles.seeMoreText, { color: theme.colors.primary }]}>See More</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         {recentlyCompleted.length > 0 ? (
           recentlyCompleted.map(trick => (
             <TrickCard key={trick.id} trick={trick} />
@@ -95,6 +103,20 @@ export default function AccountScreen() {
             <IconSymbol name="sparkles" size={32} color={theme.dark ? '#98989D' : '#8E8E93'} />
             <Text style={[styles.emptyText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
               No completed tricks yet
+            </Text>
+          </View>
+        )}
+
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Viewed</Text>
+        {recentlyViewed.length > 0 ? (
+          recentlyViewed.map(trick => (
+            <TrickCard key={trick.id} trick={trick} />
+          ))
+        ) : (
+          <View style={[styles.emptyCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
+            <IconSymbol name="eye" size={32} color={theme.dark ? '#98989D' : '#8E8E93'} />
+            <Text style={[styles.emptyText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+              No recently viewed tricks
             </Text>
           </View>
         )}
@@ -139,9 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   avatarText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontSize: 40,
   },
   profileInfo: {
     alignItems: 'center',
@@ -166,10 +186,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  seeMoreText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   progressGrid: {
     flexDirection: 'row',
@@ -199,6 +229,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
     elevation: 2,
+    marginBottom: 24,
   },
   emptyText: {
     fontSize: 14,

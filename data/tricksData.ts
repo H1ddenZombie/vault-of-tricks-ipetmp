@@ -124,6 +124,20 @@ const itemsByCategory: Record<TrickCategory, string[][]> = {
 
 const estimatedTimes = [5, 8, 10, 7, 6, 12, 15, 18, 14, 16, 20, 25, 22, 28, 30];
 
+const summaries: Record<string, string> = {
+  'Card Tricks': 'Master the art of card manipulation and sleight of hand. This trick will leave your audience wondering how you achieved the impossible with just a deck of cards.',
+  'Coin Tricks': 'Learn the secrets of coin magic and misdirection. Watch as coins appear, disappear, and travel in ways that defy logic and physics.',
+  'Mind Reading': 'Develop your mentalism skills and create the illusion of reading minds. This psychological trick will make your audience believe you have supernatural abilities.',
+  'Close Up Magic': 'Perfect your close-up performance skills with everyday objects. These intimate tricks create powerful moments of wonder right in front of your audience.',
+  'Illusions': 'Create stunning visual illusions that challenge perception. These larger-scale tricks will captivate audiences with their dramatic and impossible appearances.'
+};
+
+const methods: Record<string, string> = {
+  'Beginner': 'This trick relies on basic sleight of hand and misdirection. Practice the fundamental moves slowly until they become second nature. The key is to make your movements look natural and effortless.',
+  'Intermediate': 'This method combines multiple techniques including advanced palming, false shuffles, and psychological misdirection. Master each component separately before combining them into the full routine.',
+  'Advanced': 'This sophisticated method requires precise timing, advanced sleight of hand, and deep understanding of audience psychology. Study the theory behind each move and practice extensively before performing.'
+};
+
 function generateSteps(difficulty: DifficultyLevel, trickName: string): any[] {
   const stepCounts = { Beginner: 5, Intermediate: 7, Advanced: 10 };
   const count = stepCounts[difficulty];
@@ -131,7 +145,7 @@ function generateSteps(difficulty: DifficultyLevel, trickName: string): any[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `step-${i + 1}`,
     stepNumber: i + 1,
-    instruction: `Step ${i + 1}: ${trickName} - ${difficulty} level instruction. Practice this movement carefully and ensure smooth execution.`,
+    instruction: `Step ${i + 1}: ${trickName} - ${difficulty} level instruction. Practice this movement carefully and ensure smooth execution. Focus on your timing and misdirection to create the perfect illusion.`,
     completed: false
   }));
 }
@@ -158,6 +172,8 @@ export function generateAllTricks(): Trick[] {
           category,
           difficulty,
           description: `Learn the amazing ${trickName} trick. This ${difficulty.toLowerCase()} level ${category.toLowerCase()} trick will amaze your audience!`,
+          summary: summaries[category],
+          method: methods[difficulty],
           itemsNeeded: itemsByCategory[category][itemIndex % itemsByCategory[category].length],
           estimatedTime: estimatedTimes[itemIndex % estimatedTimes.length],
           steps: generateSteps(difficulty, trickName),
