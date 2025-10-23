@@ -52,8 +52,7 @@
           "mode": "production"
         }
       ],
-      "expo-image-picker",
-      "expo-haptics"
+      "expo-image-picker"
     ],
     "scheme": "vaultoftricks",
     "experiments": {
