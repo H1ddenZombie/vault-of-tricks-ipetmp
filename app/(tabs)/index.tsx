@@ -7,7 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Platform
+  Platform,
+  Modal
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useApp } from '@/contexts/AppContext';
@@ -24,7 +25,9 @@ export default function TricksScreen() {
   const [selectedCategory, setSelectedCategory] = useState<TrickCategory | 'All'>('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'All'>('All');
   const [sortBy, setSortBy] = useState<SortOption>('a-z');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [showDifficultyDropdown, setShowDifficultyDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   const categories: (TrickCategory | 'All')[] = ['All', 'Card Tricks', 'Coin Tricks', 'Mind Reading', 'Close Up Magic', 'Illusions'];
   const difficulties: (DifficultyLevel | 'All')[] = ['All', 'Beginner', 'Intermediate', 'Advanced'];
@@ -62,10 +65,77 @@ export default function TricksScreen() {
     return filtered;
   }, [tricks, searchQuery, selectedCategory, selectedDifficulty, sortBy]);
 
+  const DropdownModal = ({ 
+    visible, 
+    onClose, 
+    options, 
+    selectedValue, 
+    onSelect, 
+    title 
+  }: { 
+    visible: boolean; 
+    onClose: () => void; 
+    options: any[]; 
+    selectedValue: any; 
+    onSelect: (value: any) => void; 
+    title: string;
+  }) => (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableOpacity 
+        style={styles.modalOverlay} 
+        activeOpacity={1} 
+        onPress={onClose}
+      >
+        <View style={[styles.dropdownModal, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
+          <Text style={[styles.dropdownTitle, { color: theme.colors.text }]}>{title}</Text>
+          <ScrollView style={styles.dropdownScroll}>
+            {options.map((option) => {
+              const value = typeof option === 'string' ? option : option.value;
+              const label = typeof option === 'string' ? option : option.label;
+              const isSelected = selectedValue === value;
+              
+              return (
+                <TouchableOpacity
+                  key={value}
+                  style={[
+                    styles.dropdownOption,
+                    isSelected && { backgroundColor: theme.colors.primary + '20' }
+                  ]}
+                  onPress={() => {
+                    onSelect(value);
+                    onClose();
+                  }}
+                >
+                  <Text style={[
+                    styles.dropdownOptionText,
+                    { color: isSelected ? theme.colors.primary : theme.colors.text }
+                  ]}>
+                    {label}
+                  </Text>
+                  {isSelected && (
+                    <IconSymbol name="checkmark" size={20} color={theme.colors.primary} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.header, { backgroundColor: theme.colors.card }]}>
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Vault of Tricks</Text>
+        <Text style={[styles.slogan, { color: theme.dark ? '#98989D' : '#666' }]}>
+          Master the Art of Wonder
+        </Text>
         <Text style={[styles.headerSubtitle, { color: theme.dark ? '#98989D' : '#666' }]}>
           {filteredAndSortedTricks.length} tricks available
         </Text>
@@ -82,80 +152,39 @@ export default function TricksScreen() {
             onChangeText={setSearchQuery}
           />
         </View>
-        <TouchableOpacity
-          style={[styles.filterButton, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}
-          onPress={() => setShowFilters(!showFilters)}
-        >
-          <IconSymbol name="slider.horizontal.3" size={20} color={theme.colors.primary} />
-        </TouchableOpacity>
       </View>
 
-      {showFilters && (
-        <View style={[styles.filtersContainer, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}>
-          <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Category</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {categories.map(cat => (
-              <TouchableOpacity
-                key={cat}
-                style={[
-                  styles.filterChip,
-                  selectedCategory === cat && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSelectedCategory(cat)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: selectedCategory === cat ? '#FFF' : theme.colors.text }
-                ]}>
-                  {cat}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+      <View style={styles.filtersRow}>
+        <TouchableOpacity
+          style={[styles.filterDropdown, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}
+          onPress={() => setShowCategoryDropdown(true)}
+        >
+          <Text style={[styles.filterDropdownText, { color: theme.colors.text }]}>
+            {selectedCategory}
+          </Text>
+          <IconSymbol name="chevron.down" size={16} color={theme.dark ? '#98989D' : '#8E8E93'} />
+        </TouchableOpacity>
 
-          <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Difficulty</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {difficulties.map(diff => (
-              <TouchableOpacity
-                key={diff}
-                style={[
-                  styles.filterChip,
-                  selectedDifficulty === diff && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSelectedDifficulty(diff)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: selectedDifficulty === diff ? '#FFF' : theme.colors.text }
-                ]}>
-                  {diff}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+        <TouchableOpacity
+          style={[styles.filterDropdown, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}
+          onPress={() => setShowDifficultyDropdown(true)}
+        >
+          <Text style={[styles.filterDropdownText, { color: theme.colors.text }]}>
+            {selectedDifficulty}
+          </Text>
+          <IconSymbol name="chevron.down" size={16} color={theme.dark ? '#98989D' : '#8E8E93'} />
+        </TouchableOpacity>
 
-          <Text style={[styles.filterLabel, { color: theme.colors.text }]}>Sort By</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-            {sortOptions.map(option => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.filterChip,
-                  sortBy === option.value && { backgroundColor: theme.colors.primary }
-                ]}
-                onPress={() => setSortBy(option.value)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  { color: sortBy === option.value ? '#FFF' : theme.colors.text }
-                ]}>
-                  {option.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+        <TouchableOpacity
+          style={[styles.filterDropdown, { backgroundColor: theme.dark ? '#1C1C1E' : '#F2F2F7' }]}
+          onPress={() => setShowSortDropdown(true)}
+        >
+          <Text style={[styles.filterDropdownText, { color: theme.colors.text }]}>
+            {sortOptions.find(o => o.value === sortBy)?.label}
+          </Text>
+          <IconSymbol name="chevron.down" size={16} color={theme.dark ? '#98989D' : '#8E8E93'} />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -177,6 +206,33 @@ export default function TricksScreen() {
           </View>
         )}
       </ScrollView>
+
+      <DropdownModal
+        visible={showCategoryDropdown}
+        onClose={() => setShowCategoryDropdown(false)}
+        options={categories}
+        selectedValue={selectedCategory}
+        onSelect={setSelectedCategory}
+        title="Select Category"
+      />
+
+      <DropdownModal
+        visible={showDifficultyDropdown}
+        onClose={() => setShowDifficultyDropdown(false)}
+        options={difficulties}
+        selectedValue={selectedDifficulty}
+        onSelect={setSelectedDifficulty}
+        title="Select Difficulty"
+      />
+
+      <DropdownModal
+        visible={showSortDropdown}
+        onClose={() => setShowSortDropdown(false)}
+        options={sortOptions}
+        selectedValue={sortBy}
+        onSelect={setSortBy}
+        title="Sort By"
+      />
     </View>
   );
 }
@@ -195,17 +251,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 4,
   },
+  slogan: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
   headerSubtitle: {
     fontSize: 14,
   },
   searchContainer: {
-    flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 12,
-    gap: 12,
   },
   searchBar: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
@@ -217,37 +275,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
-  filterButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  filtersContainer: {
+  filtersRow: {
+    flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    marginHorizontal: 20,
-    marginBottom: 12,
-    borderRadius: 12,
+    paddingBottom: 12,
+    gap: 8,
   },
-  filterLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    marginTop: 8,
+  filterDropdown: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
   },
-  filterScroll: {
-    marginBottom: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    backgroundColor: 'rgba(128, 128, 128, 0.2)',
-  },
-  filterChipText: {
+  filterDropdownText: {
     fontSize: 14,
     fontWeight: '500',
   },
@@ -269,5 +312,48 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     marginTop: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownModal: {
+    width: '80%',
+    maxHeight: '60%',
+    borderRadius: 16,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  dropdownTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  dropdownScroll: {
+    maxHeight: 300,
+  },
+  dropdownOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  dropdownOptionText: {
+    fontSize: 16,
   },
 });

@@ -12,15 +12,19 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useApp } from '@/contexts/AppContext';
 import { IconSymbol } from '@/components/IconSymbol';
+import { PROFILE_SYMBOLS } from '@/types/tricks';
 import TrickCard from '@/components/TrickCard';
 
 export default function AccountScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { userProfile, getUserProgress, getRecentlyCompleted } = useApp();
+  const { userProfile, getUserProgress, getRecentlyCompleted, getRecentlyViewed } = useApp();
 
   const progress = getUserProgress();
   const recentlyCompleted = getRecentlyCompleted();
+  const recentlyViewed = getRecentlyViewed();
+
+  const profileSymbol = PROFILE_SYMBOLS.find(s => s.id === userProfile?.profilePicture) || PROFILE_SYMBOLS[2];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -37,9 +41,7 @@ export default function AccountScreen() {
       >
         <View style={[styles.profileCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
           <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
-            <Text style={styles.avatarText}>
-              {userProfile?.username.charAt(0).toUpperCase()}
-            </Text>
+            <IconSymbol name={profileSymbol.icon} size={40} color="#FFF" />
           </View>
           <View style={styles.profileInfo}>
             <Text style={[styles.username, { color: theme.colors.text }]}>
@@ -85,7 +87,14 @@ export default function AccountScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Completed</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Completed</Text>
+          {recentlyCompleted.length > 0 && (
+            <TouchableOpacity onPress={() => router.push('/all-completed')}>
+              <Text style={[styles.seeMoreText, { color: theme.colors.primary }]}>See More</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         {recentlyCompleted.length > 0 ? (
           recentlyCompleted.map(trick => (
             <TrickCard key={trick.id} trick={trick} />
@@ -95,6 +104,20 @@ export default function AccountScreen() {
             <IconSymbol name="sparkles" size={32} color={theme.dark ? '#98989D' : '#8E8E93'} />
             <Text style={[styles.emptyText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
               No completed tricks yet
+            </Text>
+          </View>
+        )}
+
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Recently Viewed</Text>
+        {recentlyViewed.length > 0 ? (
+          recentlyViewed.map(trick => (
+            <TrickCard key={trick.id} trick={trick} />
+          ))
+        ) : (
+          <View style={[styles.emptyCard, { backgroundColor: theme.dark ? '#1C1C1E' : '#FFF' }]}>
+            <IconSymbol name="eye" size={32} color={theme.dark ? '#98989D' : '#8E8E93'} />
+            <Text style={[styles.emptyText, { color: theme.dark ? '#98989D' : '#8E8E93' }]}>
+              No viewed tricks yet
             </Text>
           </View>
         )}
@@ -126,8 +149,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   avatar: {
     width: 80,
@@ -137,11 +172,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     marginBottom: 16,
-  },
-  avatarText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFF',
   },
   profileInfo: {
     alignItems: 'center',
@@ -166,10 +196,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  seeMoreText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   progressGrid: {
     flexDirection: 'row',
@@ -181,8 +221,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   progressNumber: {
     fontSize: 32,
@@ -197,8 +249,21 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 40,
     alignItems: 'center',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+      },
+    }),
   },
   emptyText: {
     fontSize: 14,
